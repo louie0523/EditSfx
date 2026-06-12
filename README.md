@@ -22,7 +22,7 @@
 EditSfx/
 ├─ index.html          메인 편집기 + 소개/기능/사용법/FAQ
 ├─ about.html          사이트 소개(독립 페이지)
-├─ privacy.html        개인정보처리방침(AdSense 심사용)
+├─ privacy.html        개인정보처리방침
 ├─ 404.html            오류 페이지
 ├─ robots.txt          검색엔진 크롤링 안내
 ├─ sitemap.xml         사이트맵
@@ -39,13 +39,13 @@ EditSfx/
 ```
 
 ### 설계 원칙
-- **빌드 도구 없음**: 일반 `<script>` 태그 + 전역 `window.EditSfx.*` 네임스페이스. GitHub Pages에 그대로 올리면 동작합니다.
+- **빌드 도구 없음**: 일반 `<script>` 태그 + 전역 `window.EditSfx.*` 네임스페이스. 
 - **엔진과 UI 분리**: `js/engine/`의 순수 함수는 화면과 무관하게 재사용·테스트 가능(Node에서 단위 테스트 완료). 새 기능은 보통 엔진에 함수 추가 → `app.js`에서 버튼·이벤트 연결 순서로 확장합니다.
 - 스크립트 로드 순서(중요): `lamejs → dsp → wav → audio-engine → waveform → app`. `index.html` 하단에 이미 이 순서로 작성되어 있습니다.
 
 ---
 
-## GitHub Pages 배포 방법
+<!-- <!-- <!-- ## GitHub Pages 배포 방법
 
 1. 이 폴더 전체를 GitHub 저장소에 올립니다(예: 저장소 이름 `EditSfx`).
 2. 저장소 **Settings → Pages**로 이동합니다.
@@ -53,9 +53,9 @@ EditSfx/
 4. **Branch**를 `main`(또는 사용 중인 브랜치), 폴더는 `/ (root)`로 지정하고 저장합니다.
 5. 잠시 후 `https://<사용자명>.github.io/EditSfx/` 주소로 접속됩니다.
 
-> 프로젝트 페이지가 아니라 사용자/조직 페이지(`<사용자명>.github.io` 저장소)로 올리면 주소에 `/EditSfx/`가 빠집니다. 그 경우 아래 도메인 치환에서 경로를 함께 맞춰주세요.
+> 프로젝트 페이지가 아니라 사용자/조직 페이지(`<사용자명>.github.io` 저장소)로 올리면 주소에 `/EditSfx/`가 빠집니다. 그 경우 아래 도메인 치환에서 경로를 함께 맞춰주세요. -->
 
----
+--- -->
 
 ## 배포 전 꼭 바꿔야 할 placeholder
 
@@ -82,7 +82,7 @@ python3 -m http.server 8000
 # 그 후 http://localhost:8000/ 접속
 ```
 
----
+--- -->
 
 ## 브라우저 호환성
 
