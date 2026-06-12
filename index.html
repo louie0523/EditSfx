@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>EditSfx — 효과음·사운드 자르기 / 이어붙이기 / 합성 무료 웹 편집기</title>
+
+<!-- SEO -->
+<meta name="description" content="EditSfx는 설치 없이 브라우저에서 mp3·wav 사운드를 자르고, 이어붙이고, 합성하는 무료 오디오 편집기입니다. 속도·피치·음량·페이드 효과를 적용해 mp3 또는 wav 파일로 바로 다운로드하세요. 모든 처리는 내 브라우저에서만 이루어집니다." />
+<meta name="keywords" content="효과음 편집, 사운드 자르기, mp3 자르기, wav 자르기, 사운드 이어붙이기, 오디오 합성, 효과음 만들기, 온라인 오디오 편집기, sfx editor, 무료 오디오 편집" />
+<meta name="author" content="EditSfx" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://example.github.io/EditSfx/" />
+
+<!-- Open Graph / Twitter -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="EditSfx — 무료 효과음·사운드 웹 편집기" />
+<meta property="og:description" content="브라우저에서 mp3·wav를 자르고 이어붙이고 합성해 바로 다운로드. 설치·로그인 불필요, 파일은 업로드되지 않습니다." />
+<meta property="og:locale" content="ko_KR" />
+<meta name="twitter:card" content="summary" />
+<meta name="theme-color" content="#1c5fd6" />
+
+<!-- 파비콘(인라인 SVG) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23ffb43d'/%3E%3Cpath d='M7 13h4l5-4v14l-5-4H7z' fill='%235b3b00'/%3E%3Cpath d='M20 11c2 1.5 2 8.5 0 10' stroke='%235b3b00' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
+
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+<link rel="stylesheet" href="css/xp-theme.css" />
+
+<!-- 구조화 데이터(JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "EditSfx",
+  "applicationCategory": "MultimediaApplication",
+  "operatingSystem": "Any (Web Browser)",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "브라우저에서 mp3·wav 사운드를 자르고 이어붙이고 합성하는 무료 오디오 편집기. 속도·피치·음량·페이드 효과 지원, mp3/wav 다운로드.",
+  "featureList": "사운드 자르기, 이어붙이기, 합성/믹스, 속도·피치 조절, 음량, 페이드인/아웃, 역재생, mp3/wav 내보내기"
+}
+</script>
+</head>
+<body>
+
+<!-- 상단 내비게이션 -->
+<header class="site-nav">
+  <span class="brand"><span class="logo">✂</span> EditSfx</span>
+  <a href="#app">편집기</a>
+  <a href="#intro">소개</a>
+  <a href="#features">기능</a>
+  <a href="#guide">사용법</a>
+  <a href="#faq">FAQ</a>
+  <a href="about.html">사이트 소개</a>
+  <a href="privacy.html">개인정보처리방침</a>
+</header>
+
+<!-- ===================== 편집기 창 ===================== -->
+<main id="app" class="xp-window" aria-label="EditSfx 편집기">
+  <div class="xp-titlebar">
+    <span class="title-icon">♪</span>
+    <span class="title-text">EditSfx — 사운드 편집기</span>
+    <span class="xp-title-controls">
+      <span class="xp-title-btn" aria-hidden="true">_</span>
+      <span class="xp-title-btn" aria-hidden="true">□</span>
+      <span class="xp-title-btn close" aria-hidden="true">×</span>
+    </span>
+  </div>
+  <nav class="xp-menubar" aria-hidden="true">
+    <span>파일</span><span>편집</span><span>효과</span><span>도움말</span>
+  </nav>
+
+  <div class="xp-window-body">
+    <div class="xp-tabs" role="tablist">
+      <div class="xp-tab active" data-tab="edit" role="tab">개별 파일 편집</div>
+      <div class="xp-tab" data-tab="concat" role="tab">이어붙이기</div>
+      <div class="xp-tab" data-tab="mix" role="tab">합성 / 믹스</div>
+    </div>
+
+    <!-- ---------- 패널: 개별 편집 ---------- -->
+    <section class="xp-tabpanel" data-panel="edit" role="tabpanel">
+      <div class="dropzone" id="edit-drop">
+        <strong>여기로 사운드 파일을 끌어다 놓거나 클릭해 선택</strong>
+        <small>mp3 · wav · ogg 등 · 파일은 서버로 전송되지 않고 브라우저 안에서만 처리됩니다</small>
+      </div>
+      <input type="file" id="edit-file" accept="audio/*" hidden />
+
+      <p class="hint" id="edit-info" style="margin:10px 0 6px;">아직 불러온 파일이 없습니다.</p>
+
+      <div class="waveform-wrap">
+        <div class="waveform-empty" id="edit-empty">파일을 올리면 파형이 표시됩니다 — 드래그로 구간 선택</div>
+        <canvas id="edit-canvas" hidden></canvas>
+      </div>
+
+      <div id="edit-tools" hidden>
+        <div class="xp-group" style="margin-top:12px;">
+          <div class="legend">선택 구간</div>
+          <div class="inline" style="margin-top:4px;">
+            <span>시작 <b id="sel-start" class="val">0.000s</b></span>
+            <span>끝 <b id="sel-end" class="val">0.000s</b></span>
+            <span>길이 <b id="sel-dur" class="val">0.000s</b></span>
+            <span class="spacer"></span>
+            <button class="xp-btn" id="btn-preview-sel">▶ 자른 부분 미리듣기</button>
+            <button class="xp-btn" id="btn-trim">선택 구간으로 자르기</button>
+          </div>
+          <p class="hint" style="margin:8px 0 0;">‘자른 부분 미리듣기’는 선택 구간에 효과까지 적용해 들려줍니다. 마음에 들면 ‘선택 구간으로 자르기’를 누르세요. 최소 길이 0.026초(약 26ms) 이상이어야 합니다.</p>
+        </div>
+
+        <div class="xp-group">
+          <div class="legend">효과 (미리듣기·내보내기에 실시간 적용)</div>
+          <div class="row" style="margin-top:6px;">
+            <div class="field" style="flex:1 1 220px;">
+              <label for="fx-speed">속도 (음정 유지) — <span id="fx-speed-val" class="val">1.00×</span></label>
+              <input type="range" id="fx-speed" min="0.5" max="2" step="0.01" value="1" />
+            </div>
+            <div class="field" style="flex:1 1 220px;">
+              <label for="fx-pitch">피치 — <span id="fx-pitch-val" class="val">0 반음</span></label>
+              <input type="range" id="fx-pitch" min="-12" max="12" step="1" value="0" />
+            </div>
+            <div class="field" style="flex:1 1 220px;">
+              <label for="fx-gain">음량 — <span id="fx-gain-val" class="val">1.00×</span></label>
+              <input type="range" id="fx-gain" min="0" max="3" step="0.05" value="1" />
+            </div>
+          </div>
+          <div class="row" style="margin-top:10px;">
+            <div class="field">
+              <label for="fx-fadein">페이드인(초)</label>
+              <input type="number" id="fx-fadein" min="0" step="0.05" value="0" />
+            </div>
+            <div class="field">
+              <label for="fx-fadeout">페이드아웃(초)</label>
+              <input type="number" id="fx-fadeout" min="0" step="0.05" value="0" />
+            </div>
+            <div class="field" style="justify-content:flex-end;">
+              <label class="inline"><input type="checkbox" id="fx-reverse" /> 역재생</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="inline" style="margin-top:4px;">
+          <button class="xp-btn primary" id="btn-play">▶ 미리듣기</button>
+          <button class="xp-btn" id="btn-stop">■ 정지</button>
+          <button class="xp-btn" id="btn-apply-fx">효과 파형에 적용</button>
+          <button class="xp-btn" id="btn-normalize" title="가장 큰 소리가 최대치에 닿도록 음량을 키웁니다">🔊 노멀라이즈</button>
+          <button class="xp-btn" id="btn-trim-silence" title="앞뒤의 거의 들리지 않는 무음 구간을 잘라냅니다">✀ 양끝 무음 제거</button>
+          <button class="xp-btn" id="btn-reset">원본 복원</button>
+          <span class="spacer"></span>
+          <label for="edit-format">형식</label>
+          <select id="edit-format">
+            <option value="mp3">MP3</option>
+            <option value="wav">WAV</option>
+          </select>
+          <button class="xp-btn primary" id="btn-export-edit">⤓ 다운로드</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- 패널: 이어붙이기 ---------- -->
+    <section class="xp-tabpanel" data-panel="concat" role="tabpanel" hidden>
+      <p class="hint" style="margin:0 0 8px;">
+        사운드를 순서대로 배치하고, 각 사운드 <b>뒤 간격</b>(무음) 또는 <b>크로스페이드</b>(겹쳐 섞기)를 정하세요.
+        각 사운드마다 <b>효과</b>(피치·속도·음량 등)도 따로 줄 수 있습니다.
+        예) A(띵) → 0.2초 → B(유리 깨짐). 항목을 드래그하면 순서를 바꿀 수 있습니다.
+      </p>
+      <div class="dropzone" id="concat-drop">
+        <strong>이어붙일 사운드들을 끌어다 놓거나 클릭해 추가</strong>
+        <small>여러 개를 한 번에 선택할 수 있습니다</small>
+      </div>
+      <input type="file" id="concat-file" accept="audio/*" multiple hidden />
+
+      <p class="hint" id="concat-empty" style="margin:10px 0;">아직 추가된 사운드가 없습니다.</p>
+      <ul class="track-list" id="concat-list" style="margin-top:10px;"></ul>
+
+      <div class="result-wrap" id="concat-result-wrap" hidden>
+        <div class="legend">결과 파형 미리보기 <span class="hint" id="concat-result-meta"></span></div>
+        <div class="waveform-wrap" style="margin-top:6px;">
+          <canvas id="concat-canvas" class="result-canvas"></canvas>
+        </div>
+      </div>
+
+      <div class="inline" id="concat-actions" hidden style="margin-top:12px;">
+        <button class="xp-btn primary" id="btn-concat-play">▶ 미리듣기</button>
+        <button class="xp-btn" id="btn-concat-wave">〜 결과 파형 보기</button>
+        <button class="xp-btn" id="btn-concat-toedit">✎ 편집기로 보내기</button>
+        <button class="xp-btn" id="btn-concat-clear">전체 비우기</button>
+        <span class="spacer"></span>
+        <label for="concat-format">형식</label>
+        <select id="concat-format">
+          <option value="mp3">MP3</option>
+          <option value="wav">WAV</option>
+        </select>
+        <button class="xp-btn primary" id="btn-concat-export">⤓ 합쳐서 다운로드</button>
+      </div>
+    </section>
+
+    <!-- ---------- 패널: 합성/믹스 ---------- -->
+    <section class="xp-tabpanel" data-panel="mix" role="tabpanel" hidden>
+      <p class="hint" style="margin:0 0 8px;">
+        여러 사운드를 같은 타임라인 위에 <b>겹쳐</b> 하나로 만듭니다. 각 사운드의 <b>시작 시점</b>·<b>음량</b>·<b>좌우 위치(팬)</b>를 정하고,
+        사운드마다 <b>효과</b>도 줄 수 있습니다. 예) 배경 소리 위에 0.5초 지점부터 효과음을 오른쪽에 얹기.
+      </p>
+      <div class="dropzone" id="mix-drop">
+        <strong>합성할 사운드들을 끌어다 놓거나 클릭해 추가</strong>
+        <small>겹쳐 재생할 사운드를 모두 올려 주세요</small>
+      </div>
+      <input type="file" id="mix-file" accept="audio/*" multiple hidden />
+
+      <p class="hint" id="mix-empty" style="margin:10px 0;">아직 추가된 사운드가 없습니다.</p>
+      <ul class="track-list" id="mix-list" style="margin-top:10px;"></ul>
+
+      <div class="result-wrap" id="mix-result-wrap" hidden>
+        <div class="legend">결과 파형 미리보기 <span class="hint" id="mix-result-meta"></span></div>
+        <div class="waveform-wrap" style="margin-top:6px;">
+          <canvas id="mix-canvas" class="result-canvas"></canvas>
+        </div>
+      </div>
+
+      <div class="inline" id="mix-actions" hidden style="margin-top:12px;">
+        <button class="xp-btn primary" id="btn-mix-play">▶ 미리듣기</button>
+        <button class="xp-btn" id="btn-mix-wave">〜 결과 파형 보기</button>
+        <button class="xp-btn" id="btn-mix-toedit">✎ 편집기로 보내기</button>
+        <label class="inline" title="겹친 소리가 커서 깨질 때 자동으로 음량을 맞춥니다"><input type="checkbox" id="mix-normalize" /> 자동 음량 정규화</label>
+        <button class="xp-btn" id="btn-mix-clear">전체 비우기</button>
+        <span class="spacer"></span>
+        <label for="mix-format">형식</label>
+        <select id="mix-format">
+          <option value="mp3">MP3</option>
+          <option value="wav">WAV</option>
+        </select>
+        <button class="xp-btn primary" id="btn-mix-export">⤓ 합성해서 다운로드</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="xp-statusbar">
+    <span class="led" id="status-led"></span>
+    <span id="status-text">준비 완료</span>
+    <span class="spacer"></span>
+    <span>처리는 100% 브라우저 내부 · 업로드 없음</span>
+  </div>
+</main>
+
+<!-- ===================== 소개 ===================== -->
+<section id="intro" class="xp-window">
+  <div class="xp-titlebar"><span class="title-icon">ℹ</span><span class="title-text">EditSfx 소개</span>
+    <span class="xp-title-controls"><span class="xp-title-btn">_</span><span class="xp-title-btn">□</span><span class="xp-title-btn close">×</span></span></div>
+  <div class="xp-window-body prose">
+    <p><strong>EditSfx</strong>는 게임 효과음을 비롯한 모든 짧은 사운드를 손쉽게 다듬기 위한 무료 웹 편집기입니다.
+    인터넷에서 받은 효과음에 불필요한 앞뒤 공백이 있거나, 원하는 한 부분만 잘라 쓰고 싶을 때,
+    또는 여러 소리를 이어 붙이거나 겹쳐 새로운 효과음을 만들고 싶을 때 사용합니다.</p>
+    <p>별도의 프로그램 설치나 회원가입이 필요 없습니다. 브라우저에서 파일을 올리면
+    <strong>자르기 · 이어붙이기 · 합성</strong>은 물론 속도·피치·음량·페이드 같은 세부 편집까지 마친 뒤
+    <strong>MP3 또는 WAV</strong> 파일로 바로 내려받을 수 있습니다.</p>
+    <p>무엇보다 올린 파일은 어떤 서버에도 전송되지 않습니다. 모든 처리는
+    여러분의 기기(브라우저) 안에서만 이루어지므로 비공개 음원도 안심하고 다룰 수 있습니다.
+    게임 개발뿐 아니라 영상 편집, 방송, 알림음 제작 등 다양한 곳에 활용해 보세요.</p>
+  </div>
+</section>
+
+<!-- ===================== 기능 소개 ===================== -->
+<section id="features" class="xp-window">
+  <div class="xp-titlebar"><span class="title-icon">★</span><span class="title-text">기능 소개</span>
+    <span class="xp-title-controls"><span class="xp-title-btn">_</span><span class="xp-title-btn">□</span><span class="xp-title-btn close">×</span></span></div>
+  <div class="xp-window-body prose">
+    <h2>1. 개별 파일 편집 — 자르기와 세부 효과</h2>
+    <p>파일을 올리면 파형이 표시됩니다. 파형 위를 드래그해 원하는 구간을 선택하고
+    <em>선택 구간으로 자르기</em>를 누르면 그 부분만 남습니다. 효과음의 앞뒤 공백 제거에 가장 자주 쓰이는 기능입니다.
+    품질 보호를 위해 최소 길이는 0.026초(약 26ms)로 제한됩니다.</p>
+    <ul>
+      <li><strong>속도</strong> — 음정은 유지한 채 빠르기만 0.5×~2× 범위로 조절합니다.</li>
+      <li><strong>피치</strong> — 길이는 그대로 두고 음정을 반음 단위(-12~+12)로 올리거나 내립니다.</li>
+      <li><strong>음량</strong> — 0×~3× 배율로 키우거나 줄입니다. dB 값도 함께 표시됩니다.</li>
+      <li><strong>페이드인 / 페이드아웃</strong> — 시작·끝을 부드럽게 처리해 ‘툭’ 끊기는 소리를 없앱니다.</li>
+      <li><strong>역재생</strong> — 사운드를 거꾸로 뒤집어 색다른 효과를 만듭니다.</li>
+    </ul>
+    <p><strong>자른 부분 미리듣기</strong>를 누르면 선택한 구간에 위 효과까지 모두 입힌 소리를 잘라내기 전에 바로 들어볼 수 있습니다.
+    또한 <strong>노멀라이즈</strong>(가장 큰 소리가 최대치에 닿도록 음량을 자동으로 키움)와
+    <strong>양끝 무음 제거</strong>(앞뒤의 거의 들리지 않는 부분을 자동으로 잘라냄) 버튼으로 한 번에 다듬을 수 있습니다.
+    효과는 미리듣기와 내보내기에 실시간 반영되며, <em>효과 파형에 적용</em>으로 결과를 확정해 편집을 이어갈 수 있습니다.</p>
+
+    <h2>2. 이어붙이기 — 순서·간격·크로스페이드</h2>
+    <p>여러 사운드를 차례로 재생되도록 합칩니다. 각 사운드 <strong>뒤 간격(초)</strong>을 정하면 그만큼 무음이 들어갑니다.
+    예를 들어 ‘띵’ 소리 뒤 간격을 0.2초로 두고 ‘유리 깨짐’ 소리를 추가하면, 0.2초 후 유리 소리가 이어지는 하나의 파일이 됩니다.</p>
+    <ul>
+      <li><strong>크로스페이드(초)</strong> — 간격 대신 다음 소리와 겹쳐 부드럽게 섞이도록 만듭니다. 음악·앰비언스 연결에 좋습니다.</li>
+      <li><strong>트랙별 효과</strong> — 이어붙이는 각 사운드마다 피치·속도·음량·페이드·역재생을 따로 줄 수 있습니다.</li>
+      <li><strong>순서 변경</strong> — 항목을 드래그해 순서를 바꿉니다.</li>
+    </ul>
+
+    <h2>3. 합성 / 믹스 — 겹쳐 쌓기</h2>
+    <p>여러 사운드를 같은 시간축 위에 겹쳐 하나로 만듭니다. 각 사운드의 <strong>시작 시점</strong>과 <strong>음량</strong>을 지정해
+    배경음 위에 효과음을 얹는 식의 합성을 할 수 있습니다.</p>
+    <ul>
+      <li><strong>좌우 팬(L/R)</strong> — 각 소리를 왼쪽·가운데·오른쪽 어디에서 들리게 할지 배치해 입체감을 줍니다(이어붙이기와의 차별 기능).</li>
+      <li><strong>트랙별 효과</strong> — 겹치는 각 사운드에도 피치·속도·음량 등 효과를 따로 적용합니다.</li>
+      <li><strong>자동 음량 정규화</strong> — 겹쳐서 소리가 커질 때 깨지지 않도록 전체 음량을 자동으로 맞춥니다(끄면 기존처럼 클리핑만 방지).</li>
+    </ul>
+
+    <h2>4. 결과 파형 미리보기 · 편집기로 보내기</h2>
+    <p>이어붙이기와 합성 모두 <strong>결과 파형 보기</strong>로 합쳐진 소리의 형태를 눈으로 확인할 수 있고,
+    각 사운드의 작은 파형 썸네일도 함께 표시됩니다. <strong>편집기로 보내기</strong>를 누르면 합쳐진 결과가 ‘개별 파일 편집’으로 넘어가
+    추가로 자르거나 효과를 더할 수 있습니다.</p>
+
+    <h2>5. 내보내기와 개인정보</h2>
+    <p>결과물은 <strong>MP3(192kbps)</strong> 또는 무손실 <strong>WAV</strong>로 저장합니다.
+    서로 다른 샘플레이트·채널의 파일도 자동으로 맞춰 처리합니다. 업로드·로그인·서버 저장이 전혀 없어
+    작업 내용은 외부로 나가지 않습니다.</p>
+  </div>
+</section>
+
+<!-- ===================== 사용법 ===================== -->
+<section id="guide" class="xp-window">
+  <div class="xp-titlebar"><span class="title-icon">▤</span><span class="title-text">간단 사용법</span>
+    <span class="xp-title-controls"><span class="xp-title-btn">_</span><span class="xp-title-btn">□</span><span class="xp-title-btn close">×</span></span></div>
+  <div class="xp-window-body prose">
+    <h3>효과음 공백 잘라내기</h3>
+    <ol>
+      <li>‘개별 파일 편집’ 탭에서 파일을 올립니다.</li>
+      <li>파형에서 남길 구간을 드래그로 선택합니다.</li>
+      <li><em>선택 구간으로 자르기</em> → 필요하면 페이드인/아웃을 살짝 적용합니다.</li>
+      <li>형식(MP3/WAV)을 고르고 <em>다운로드</em>를 누릅니다.</li>
+    </ol>
+    <h3>두 소리를 0.2초 간격으로 이어붙이기</h3>
+    <ol>
+      <li>‘이어붙이기’ 탭에서 A, B 두 파일을 추가합니다.</li>
+      <li>A의 <em>뒤 간격</em>을 0.2로 설정합니다(부드럽게 섞으려면 <em>크로스페이드</em>에 값을 넣으세요).</li>
+      <li>필요하면 각 트랙의 <em>효과</em>를 펼쳐 피치·음량 등을 조절합니다.</li>
+      <li><em>결과 파형 보기</em>로 형태를 확인한 뒤 <em>합쳐서 다운로드</em>를 누릅니다.</li>
+    </ol>
+    <h3>배경음 위에 효과음을 오른쪽에서 얹기(합성)</h3>
+    <ol>
+      <li>‘합성 / 믹스’ 탭에서 배경음과 효과음을 추가합니다.</li>
+      <li>효과음의 <em>시작(초)</em>을 원하는 지점으로, <em>팬</em>을 오른쪽으로 옮깁니다.</li>
+      <li>소리가 깨지면 <em>자동 음량 정규화</em>를 켭니다.</li>
+      <li><em>편집기로 보내기</em>로 결과를 더 다듬거나 바로 <em>합성해서 다운로드</em>합니다.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faq" class="xp-window">
+  <div class="xp-titlebar"><span class="title-icon">?</span><span class="title-text">자주 묻는 질문</span>
+    <span class="xp-title-controls"><span class="xp-title-btn">_</span><span class="xp-title-btn">□</span><span class="xp-title-btn close">×</span></span></div>
+  <div class="xp-window-body faq">
+    <details open>
+      <summary>내 사운드 파일이 서버로 올라가나요?</summary>
+      <div class="faq-body">아니요. EditSfx의 모든 처리는 여러분의 브라우저 안에서만 이루어집니다. 파일은 어떤 서버로도 전송·저장되지 않습니다.</div>
+    </details>
+    <details>
+      <summary>어떤 파일 형식을 지원하나요?</summary>
+      <div class="faq-body">불러오기는 브라우저가 디코딩할 수 있는 mp3, wav, ogg, m4a 등을 지원합니다(브라우저별로 다소 차이가 있습니다). 내보내기는 MP3와 WAV를 지원합니다.</div>
+    </details>
+    <details>
+      <summary>왜 0.026초보다 짧게 자를 수 없나요?</summary>
+      <div class="faq-body">지나치게 짧은 구간은 ‘툭’ 하는 잡음(클릭)만 남거나 들리지 않는 경우가 많아, 품질을 위해 최소 길이를 0.026초로 제한했습니다.</div>
+    </details>
+    <details>
+      <summary>MP3로 저장이 안 되고 WAV로 받아져요.</summary>
+      <div class="faq-body">MP3 인코더(외부 스크립트)가 네트워크 문제로 로드되지 않은 경우입니다. 이때는 자동으로 WAV로 저장됩니다. 새로고침 후 다시 시도해 보세요.</div>
+    </details>
+    <details>
+      <summary>상업적으로 사용해도 되나요?</summary>
+      <div class="faq-body">EditSfx라는 도구 자체는 자유롭게 사용할 수 있습니다. 다만 편집하는 음원의 저작권·라이선스는 사용자 본인이 확인하고 책임져야 합니다.</div>
+    </details>
+    <details>
+      <summary>모바일에서도 되나요?</summary>
+      <div class="faq-body">네. 최신 모바일 브라우저에서 동작합니다. 다만 매우 긴 파일은 기기 성능에 따라 처리에 시간이 걸릴 수 있습니다.</div>
+    </details>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <p>© <span id="year">2026</span> EditSfx · <a href="about.html">사이트 소개</a> · <a href="privacy.html">개인정보처리방침</a> · 모든 처리는 브라우저 내에서 이루어집니다.</p>
+</footer>
+
+<!-- ===================== 태스크바 ===================== -->
+<div class="xp-taskbar">
+  <button class="start-btn" type="button" onclick="document.getElementById('app').scrollIntoView({behavior:'smooth'})">
+    <span class="start-flag"></span> 시작
+  </button>
+  <div class="taskbar-tabs">
+    <span class="taskbar-tab">♪ EditSfx — 사운드 편집기</span>
+  </div>
+  <span class="taskbar-clock" id="clock">오후 12:00</span>
+</div>
+
+<!-- ===================== 스크립트 ===================== -->
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<!-- MP3 인코더 (실패 시 WAV로 자동 대체) -->
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js"
+  onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/lamejs@1.2.0/lame.min.js';document.head.appendChild(s);"></script>
+
+<script src="js/engine/dsp.js"></script>
+<script src="js/engine/wav.js"></script>
+<script src="js/engine/audio-engine.js"></script>
+<script src="js/waveform.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

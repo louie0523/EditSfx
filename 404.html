@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>페이지를 찾을 수 없습니다 — EditSfx</title>
+<meta name="description" content="요청하신 페이지를 찾을 수 없습니다. EditSfx 편집기로 돌아가세요." />
+<meta name="robots" content="noindex, follow" />
+<meta name="theme-color" content="#1c5fd6" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23ffb43d'/%3E%3Cpath d='M7 13h4l5-4v14l-5-4H7z' fill='%235b3b00'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="css/xp-theme.css" />
+</head>
+<body>
+<header class="site-nav">
+  <a class="brand" href="index.html" style="text-decoration:none;"><span class="logo">✂</span> EditSfx</a>
+  <a href="index.html#app">편집기</a>
+  <a href="index.html#features">기능</a>
+  <a href="index.html#faq">FAQ</a>
+  <a href="about.html">사이트 소개</a>
+  <a href="privacy.html">개인정보처리방침</a>
+</header>
+
+<main class="xp-window" style="max-width:560px;">
+  <div class="xp-titlebar"><span class="title-icon">⚠️</span><span class="title-text">오류</span>
+    <span class="xp-title-controls"><span class="xp-title-btn">_</span><span class="xp-title-btn">□</span><span class="xp-title-btn close">×</span></span></div>
+  <div class="xp-window-body prose" style="text-align:center;">
+    <p style="font-size:48px;margin:8px 0;">⚠️</p>
+    <h1>404 — 페이지를 찾을 수 없습니다</h1>
+    <p>요청하신 주소가 잘못되었거나 페이지가 이동되었을 수 있습니다.</p>
+    <p style="margin-top:18px;">
+      <a class="xp-btn primary" href="index.html" style="text-decoration:none;">편집기로 돌아가기</a>
+    </p>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <p>© <span id="year">2026</span> EditSfx · <a href="about.html">사이트 소개</a> · <a href="privacy.html">개인정보처리방침</a></p>
+</footer>
+
+<div class="xp-taskbar">
+  <button class="start-btn" type="button" onclick="location.href='index.html'"><span class="start-flag"></span> 시작</button>
+  <div class="taskbar-tabs"><span class="taskbar-tab">⚠️ 오류</span></div>
+  <span class="taskbar-clock" id="clock">오후 12:00</span>
+</div>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+(function(){var el=document.getElementById('clock');function t(){var d=new Date(),h=d.getHours(),m=String(d.getMinutes()).padStart(2,'0'),ap=h<12?'오전':'오후';h=h%12||12;el.textContent=ap+' '+h+':'+m;}t();setInterval(t,15000);})();
+</script>
+</body>
+</html>
