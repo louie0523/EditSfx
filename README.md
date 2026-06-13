@@ -45,44 +45,6 @@ EditSfx/
 
 ---
 
-## GitHub Pages 배포 방법
-
-1. 이 폴더 전체를 GitHub 저장소에 올립니다(예: 저장소 이름 `EditSfx`).
-2. 저장소 **Settings → Pages**로 이동합니다.
-3. **Build and deployment → Source**를 **Deploy from a branch**로 설정합니다.
-4. **Branch**를 `main`(또는 사용 중인 브랜치), 폴더는 `/ (root)`로 지정하고 저장합니다.
-5. 잠시 후 `https://<사용자명>.github.io/EditSfx/` 주소로 접속됩니다.
-
-> 프로젝트 페이지가 아니라 사용자/조직 페이지(`<사용자명>.github.io` 저장소)로 올리면 주소에 `/EditSfx/`가 빠집니다. 그 경우 아래 도메인 치환에서 경로를 함께 맞춰주세요.
-
----
-
-## 배포 전 꼭 바꿔야 할 placeholder
-
-코드 곳곳에 임시 도메인 `https://example.github.io/EditSfx/`가 들어 있습니다. 실제 주소로 일괄 치환하세요.
-
-- `index.html` — `<link rel="canonical">`, Open Graph/Twitter URL, JSON-LD `url`
-- `about.html`, `privacy.html` — `canonical`, Open Graph URL
-- `robots.txt` — `Sitemap:` 줄
-- `sitemap.xml` — 모든 `<loc>`
-
-또한:
-- **AdSense 연락처**: `privacy.html` 9번 항목의 운영자 연락처를 실제 값으로 채우세요(심사 시 권장).
-- **AdSense 광고 코드**: 심사 승인 후 발급되는 스크립트를 `index.html` `<head>`에 추가하면 됩니다.
-
----
-
-## 로컬에서 미리보기
-
-브라우저 보안 정책상 파일을 더블클릭(`file://`)하면 일부 기능이 제한될 수 있습니다. 간단한 로컬 서버로 여는 것을 권장합니다.
-
-```bash
-# Python 3
-python3 -m http.server 8000
-# 그 후 http://localhost:8000/ 접속
-```
-
----
 
 ## 브라우저 호환성
 
