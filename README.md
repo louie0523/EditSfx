@@ -39,13 +39,13 @@ EditSfx/
 ```
 
 ### 설계 원칙
-- **빌드 도구 없음**: 일반 `<script>` 태그 + 전역 `window.EditSfx.*` 네임스페이스.
+- **빌드 도구 없음**: 일반 `<script>` 태그 + 전역 `window.EditSfx.*` 네임스페이스. GitHub Pages에 그대로 올리면 동작합니다.
 - **엔진과 UI 분리**: `js/engine/`의 순수 함수는 화면과 무관하게 재사용·테스트 가능(Node에서 단위 테스트 완료). 새 기능은 보통 엔진에 함수 추가 → `app.js`에서 버튼·이벤트 연결 순서로 확장합니다.
 - 스크립트 로드 순서(중요): `lamejs → dsp → wav → audio-engine → waveform → app`. `index.html` 하단에 이미 이 순서로 작성되어 있습니다.
 
 ---
 
-<!-- ## GitHub Pages 배포 방법
+## GitHub Pages 배포 방법
 
 1. 이 폴더 전체를 GitHub 저장소에 올립니다(예: 저장소 이름 `EditSfx`).
 2. 저장소 **Settings → Pages**로 이동합니다.
@@ -80,9 +80,9 @@ EditSfx/
 # Python 3
 python3 -m http.server 8000
 # 그 후 http://localhost:8000/ 접속
-``` -->
+```
 
-<!-- --- -->
+---
 
 ## 브라우저 호환성
 

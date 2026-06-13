@@ -107,19 +107,35 @@
       ctx.stroke();
     });
 
-    // 플레이헤드
+    // 플레이헤드(재생 위치) — 항상 잘 보이도록 굵게 + 대비 외곽선 + 상단 손잡이
     if (this.playhead >= 0) {
-      const px = this._secToX(this.playhead);
-      ctx.strokeStyle = '#ffffff';
+      let px = Math.round(this._secToX(this.playhead));
+      px = Math.max(1, Math.min(w - 2, px));
+      // 1) 어두운 외곽선(어떤 파형 위에서도 대비 확보)
+      ctx.fillStyle = 'rgba(0,0,0,0.6)';
+      ctx.fillRect(px - 2, 0, 5, h);
+      // 2) 밝은 본선(2px, 정수 좌표라 흐려지지 않음)
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(px, 0, 2, h);
+      // 3) 상단 손잡이 삼각형
       ctx.beginPath();
-      ctx.moveTo(px + 0.5, 0);
-      ctx.lineTo(px + 0.5, h);
-      ctx.stroke();
+      ctx.moveTo(px - 4, 0);
+      ctx.lineTo(px + 6, 0);
+      ctx.lineTo(px + 1, 8);
+      ctx.closePath();
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
     }
   };
 
   Waveform.prototype.setPlayhead = function (sec) {
     this.playhead = sec;
+    this.draw();
+  };
+
+  /** 캔버스 크기에 맞춰 다시 측정하고 그린다(탭 전환·레이아웃 변경 후 호출). */
+  Waveform.prototype.redraw = function () {
+    this._resize();
     this.draw();
   };
 
@@ -143,6 +159,15 @@
     }
     function down(e) {
       if (!self.buffer) return;
+      // 가운데(휠) 클릭: 그 지점부터 재생
+      if (e.type === 'mousedown' && e.button === 1) {
+        e.preventDefault(); // 가운데 클릭 자동스크롤 방지
+        const sec = self._xToSec(pos(e));
+        if (self.opts.onSeekPlay) self.opts.onSeekPlay(sec);
+        return;
+      }
+      // 왼쪽 버튼(또는 터치)만 구간 선택 드래그
+      if (e.type === 'mousedown' && e.button !== 0) return;
       self._dragging = true;
       self._anchor = self._xToSec(pos(e));
       self.selStart = self._anchor;
@@ -170,6 +195,8 @@
       if (self.opts.onSelect) self.opts.onSelect(self.selStart, self.selEnd);
     }
     this.canvas.addEventListener('mousedown', down);
+    // 일부 브라우저의 가운데 클릭 기본동작(자동스크롤/붙여넣기) 차단
+    this.canvas.addEventListener('auxclick', function (e) { if (e.button === 1) e.preventDefault(); });
     global.addEventListener('mousemove', move);
     global.addEventListener('mouseup', up);
     this.canvas.addEventListener('touchstart', down, { passive: false });

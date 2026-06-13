@@ -76,8 +76,9 @@
   let rafId = 0;
   function stopPlayback() {
     if (currentSource) {
-      try { currentSource.stop(); } catch (e) {}
-      currentSource = null;
+      const s = currentSource;
+      currentSource = null; // 먼저 null로: 뒤늦게 오는 onended가 새 재생을 건드리지 못하게
+      try { s.stop(); } catch (e) {}
     }
     if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
   }
@@ -88,13 +89,15 @@
     src.buffer = buffer;
     src.connect(ctx.destination);
     const startAt = ctx.currentTime;
-    src.start();
     currentSource = src;
     src.onended = function () {
-      if (currentSource === src) currentSource = null;
+      // 이미 다른 재생으로 교체된 경우(수동 정지 포함)에는 아무것도 하지 않는다.
+      if (currentSource !== src) return;
+      currentSource = null;
       if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
       if (onEnd) onEnd();
     };
+    src.start();
     if (onTick) {
       const tick = function () {
         if (currentSource !== src) return;
@@ -150,6 +153,8 @@
     $$('.xp-tab').forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-tab') === name); });
     $$('.xp-tabpanel').forEach(function (p) { p.hidden = p.getAttribute('data-panel') !== name; });
     stopPlayback();
+    if (editor.wave) { editor.wave.setPlayhead(-1); if (name === 'edit' && editor.working) editor.wave.redraw(); }
+    setStatus('준비 완료', '');
   }
   function initTabs() {
     $$('.xp-tab').forEach(function (tab) {
@@ -253,7 +258,8 @@
         $('#sel-start').textContent = fmtTime(s);
         $('#sel-end').textContent = fmtTime(e);
         $('#sel-dur').textContent = fmtTime(e - s);
-      }
+      },
+      onSeekPlay: function (sec) { playFromSec(sec); }
     });
 
     bindRangeLabel('#fx-speed', '#fx-speed-val', function (v) { return Number(v).toFixed(2) + '×'; });
@@ -265,7 +271,7 @@
 
     $('#btn-play').addEventListener('click', previewEdit);
     $('#btn-preview-sel').addEventListener('click', previewSelection);
-    $('#btn-stop').addEventListener('click', function () { stopPlayback(); editor.wave.setPlayhead(-1); });
+    $('#btn-stop').addEventListener('click', function () { stopPlayback(); editor.wave.setPlayhead(-1); setStatus('준비 완료', ''); });
     $('#btn-trim').addEventListener('click', applyTrim);
     $('#btn-apply-fx').addEventListener('click', bakeEffects);
     $('#btn-normalize').addEventListener('click', normalizeEditor);
@@ -288,6 +294,7 @@
     $('#edit-empty').hidden = true;
     $('#edit-canvas').hidden = false;
     $('#edit-tools').hidden = false;
+    const waveHint = $('#edit-wave-hint'); if (waveHint) waveHint.hidden = false;
     $('#edit-info').textContent = track.name + '  —  ' + fmtMeta(track.buffer);
     editor.wave.setBuffer(track.buffer);
     setStatus('불러옴: ' + track.name, '');
@@ -336,6 +343,35 @@
     setStatus('선택 구간 효과 적용 중…', 'busy');
     Engine.applyEffects(seg, getFx()).then(function (buf) {
       setStatus('재생 중(선택 구간)', '');
+      const dur = buf.duration;
+      playBuffer(
+        buf,
+        function (t) { editor.wave.setPlayhead(baseStart + (t / dur) * baseDur); },
+        function () { setStatus('준비 완료', ''); editor.wave.setPlayhead(-1); }
+      );
+    });
+  }
+
+  /** 파형에서 휠(가운데) 클릭한 지점부터 끝까지, 효과까지 적용해 재생한다. */
+  function playFromSec(startSec) {
+    if (!editor.working) return;
+    const sr = editor.working.sampleRate;
+    let s = Math.max(0, Math.min(editor.working.length - 1, Math.floor(startSec * sr)));
+    const e = editor.working.length;
+    if (e - s < Math.round(0.01 * sr)) { // 끝에 너무 가까우면 무시
+      toast('끝에 너무 가까워 재생할 부분이 없습니다.', 'error');
+      return;
+    }
+    const channels = [];
+    for (let c = 0; c < editor.working.numberOfChannels; c++) {
+      channels.push(editor.working.getChannelData(c).slice(s, e));
+    }
+    const seg = Engine.channelsToBuffer(channels, sr);
+    const baseStart = s / sr, baseDur = (e - s) / sr;
+    editor.wave.setPlayhead(baseStart);
+    setStatus('효과 적용 중…', 'busy');
+    Engine.applyEffects(seg, getFx()).then(function (buf) {
+      setStatus('재생 중 (' + baseStart.toFixed(2) + 's부터)', '');
       const dur = buf.duration;
       playBuffer(
         buf,
