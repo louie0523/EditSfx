@@ -90,7 +90,7 @@
         <div class="waveform-empty" id="edit-empty">파일을 올리면 파형이 표시됩니다 — 드래그로 구간 선택</div>
         <canvas id="edit-canvas" hidden></canvas>
       </div>
-      <p class="hint" id="edit-wave-hint" style="margin:6px 0 0;" hidden>💡 파형을 <b>드래그</b>하면 구간 선택, <b>휠(가운데) 클릭</b>하면 그 지점부터 재생됩니다.</p>
+      <p class="hint" id="edit-wave-hint" style="margin:6px 0 0;" hidden>💡 <b>좌클릭 드래그</b> 남길 구간 · <b>우클릭 드래그</b> 삭제할 구간 · <b>휠 클릭</b> 그 지점부터 재생</p>
 
       <div id="edit-tools" hidden>
         <div class="xp-group" style="margin-top:12px;">
@@ -101,9 +101,17 @@
             <span>길이 <b id="sel-dur" class="val">0.000s</b></span>
             <span class="spacer"></span>
             <button class="xp-btn" id="btn-preview-sel">▶ 자른 부분 미리듣기</button>
-            <button class="xp-btn" id="btn-trim">선택 구간으로 자르기</button>
+            <button class="xp-btn" id="btn-trim">선택 구간 남기기(자르기)</button>
           </div>
-          <p class="hint" style="margin:8px 0 0;">‘자른 부분 미리듣기’는 선택 구간에 효과까지 적용해 들려줍니다. 마음에 들면 ‘선택 구간으로 자르기’를 누르세요. 최소 길이 0.026초(약 26ms) 이상이어야 합니다.</p>
+          <div class="inline" style="margin-top:6px;">
+            <span style="color:#c0392b;">삭제 구간 <b id="del-range" class="val">없음</b></span>
+            <span class="spacer"></span>
+            <button class="xp-btn" id="btn-delete-sel">✂ 선택 구간 삭제(도려내기)</button>
+          </div>
+          <p class="hint" style="margin:8px 0 0;">
+            <b>좌클릭 드래그</b> = 남길 구간(파란색) · <b>우클릭 드래그</b> = 삭제할 구간(빨간색) · <b>휠 클릭</b> = 그 지점부터 재생.<br>
+            ‘선택 구간 남기기’는 파란 구간만 남기고, ‘선택 구간 삭제’는 빨간 구간만 도려내고 앞뒤를 이어 붙입니다. 최소 길이 0.026초(약 26ms) 이상이어야 합니다.
+          </p>
         </div>
 
         <div class="xp-group">
@@ -274,7 +282,10 @@
       <li><strong>역재생</strong> — 사운드를 거꾸로 뒤집어 색다른 효과를 만듭니다.</li>
     </ul>
     <p><strong>자른 부분 미리듣기</strong>를 누르면 선택한 구간에 위 효과까지 모두 입힌 소리를 잘라내기 전에 바로 들어볼 수 있습니다.
-    또한 <strong>노멀라이즈</strong>(가장 큰 소리가 최대치에 닿도록 음량을 자동으로 키움)와
+    파형은 두 가지 방식으로 다룰 수 있습니다. <strong>좌클릭 드래그</strong>로 표시한 파란 구간은 ‘선택 구간 남기기’로 그 부분만 남기고,
+    <strong>우클릭 드래그</strong>로 표시한 빨간 구간은 ‘선택 구간 삭제’로 그 부분만 도려내고 앞뒤를 이어 붙입니다(가운데 잡음·실수 구간 제거에 편리).
+    또한 <strong>휠(가운데) 클릭</strong>으로 그 지점부터 재생할 수 있습니다.
+    그 밖에 <strong>노멀라이즈</strong>(가장 큰 소리가 최대치에 닿도록 음량을 자동으로 키움)와
     <strong>양끝 무음 제거</strong>(앞뒤의 거의 들리지 않는 부분을 자동으로 잘라냄) 버튼으로 한 번에 다듬을 수 있습니다.
     효과는 미리듣기와 내보내기에 실시간 반영되며, <em>효과 파형에 적용</em>으로 결과를 확정해 편집을 이어갈 수 있습니다.</p>
 
